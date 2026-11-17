@@ -10,7 +10,7 @@ __pycache__/
 frontend/node_modules/
 
 # Archivos compilados del Frontend
-frontend/dist/
+#frontend/dist/
 
 # Archivos de entorno y secretos
 .env
