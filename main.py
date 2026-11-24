@@ -64,7 +64,7 @@ app.add_middleware(
 # 1. Configuración de conexión a MariaDB/MySQL para Bases_de_Mecatronica
 DATABASE_URL = os.getenv(
     "DATABASE_URL",
-    "mysql+pymysql://Mecatronica:mecatronica@192.168.1.13:3306/Bases_de_Mecatronica",
+    "mysql+pymysql://Mecatronica:M3c2026%40.@172.16.151.55:3306/Inventario_Mecatronica",
 )
 
 engine = create_engine(DATABASE_URL, pool_pre_ping=True)
@@ -180,6 +180,8 @@ def verificar_estado_esquema(forzar: bool = False):
         return _ESTADO_CACHE["data"]
 
     try:
+        _asegurar_identificacion_opcional()
+        _detectar_tabla_componentes()
         inspector = inspect(engine)
         existentes = inspector.get_table_names()
         existentes_lower = {t.lower(): t for t in existentes}
@@ -513,8 +515,11 @@ _IDENTIFICACION_SYNCED = False
 
 def _asegurar_identificacion_opcional():
     """
-    Si en la tabla Equipos aún existe la columna histórica 'Identificacion' como NOT NULL,
-    la convierte a NULL DEFAULT NULL para que no sea requerida al crear equipos.
+    1. Si en la tabla Equipos aún existe la columna histórica 'Identificacion' como NOT NULL,
+       la convierte a NULL DEFAULT NULL.
+    2. Elimina los índices UNIQUE de 'Serie' (uq_equipo_serie) y 'U_Serie' (uq_equipo_userie)
+       si existen, para que 'Serie' (Serie de Fábrica) se pueda repetir y 'U_Serie' permita
+       múltiples equipos con 'N/A', dejando como único obligatorio/irrepetible 'Lab_Serie'.
     """
     global _IDENTIFICACION_SYNCED
     if _IDENTIFICACION_SYNCED:
@@ -523,15 +528,36 @@ def _asegurar_identificacion_opcional():
         insp = inspect(engine)
         tablas = {t.lower(): t for t in insp.get_table_names()}
         if "equipos" in tablas:
-            cols = {c["name"].lower(): c for c in insp.get_columns(tablas["equipos"])}
+            t_eq = tablas["equipos"]
+            cols = {c["name"].lower(): c for c in insp.get_columns(t_eq)}
             if "identificacion" in cols:
                 col_real = cols["identificacion"]["name"]
-                with engine.begin() as conn:
-                    conn.execute(
-                        text(
-                            f"ALTER TABLE `{tablas['equipos']}` MODIFY `{col_real}` VARCHAR(100) NULL DEFAULT NULL"
+                try:
+                    with engine.begin() as conn:
+                        conn.execute(
+                            text(
+                                f"ALTER TABLE `{t_eq}` MODIFY `{col_real}` VARCHAR(100) NULL DEFAULT NULL"
+                            )
                         )
-                    )
+                except Exception:
+                    pass
+
+            # Quitar índices UNIQUE de Serie y U_Serie si existen en la BD
+            try:
+                indices = insp.get_indexes(t_eq)
+                for idx in indices or []:
+                    if not idx.get("unique"):
+                        continue
+                    idx_name = idx.get("name")
+                    idx_cols = {c.lower() for c in (idx.get("column_names") or []) if c}
+                    if idx_name and idx_cols.intersection({"serie", "u_serie", "identificacion"}):
+                        try:
+                            with engine.begin() as conn:
+                                conn.execute(text(f"ALTER TABLE `{t_eq}` DROP INDEX `{idx_name}`"))
+                        except Exception:
+                            pass
+            except Exception:
+                pass
         _IDENTIFICACION_SYNCED = True
     except Exception:
         _IDENTIFICACION_SYNCED = True
@@ -748,8 +774,8 @@ def serializar_equipo(eq: Equipo, componentes_equipo: Optional[list] = None) -> 
         "marca": eq.Marca,
         "fabricante": eq.Marca,  # Alias de compatibilidad para vistas
         "modelo": eq.Modelo,
-        "serie_equipo": eq.Serie,
-        "serie_universidad": eq.U_Serie,
+        "serie_equipo": (eq.Serie or "").strip() or "N/A",
+        "serie_universidad": (eq.U_Serie or "").strip() or "N/A",
         "serie_laboratorio": eq.Lab_Serie,
         "estado": eq.Estado or "Disponible",
         "fecha_ingreso": eq.Fecha_Ingreso.isoformat() if eq.Fecha_Ingreso else None,
@@ -921,6 +947,25 @@ def listar_equipos(
 def registrar_equipo(payload: EquipoCreate, db: Session = Depends(get_db)):
     try:
         _asegurar_identificacion_opcional()
+        lab_serie_final = (payload.serie_laboratorio or "").strip()
+        if not lab_serie_final:
+            raise HTTPException(
+                status_code=400,
+                detail="La Serie de Laboratorio es obligatoria.",
+            )
+
+        u_serie_final = (payload.serie_universidad or "").strip() or "N/A"
+        serie_fabrica_final = (payload.serie_equipo or "").strip() or "N/A"
+
+        # Si el usuario sí escribió una Serie de Universidad distinta de N/A, validar que no esté repetida
+        if u_serie_final.upper() != "N/A":
+            dup_u = db.query(Equipo).filter(Equipo.U_Serie == u_serie_final).first()
+            if dup_u:
+                raise HTTPException(
+                    status_code=400,
+                    detail=f"Ya existe otro equipo registrado con la Serie de Universidad '{u_serie_final}'.",
+                )
+
         id_prov, id_adq, id_tec, id_alim = _resolver_fks_obligatorias_equipo(payload, db)
         marca_final = (payload.marca or payload.fabricante or "Sin marca").strip()
         fecha_final = payload.fecha_ingreso or payload.fecha_adquisicion or date.today()
@@ -939,9 +984,9 @@ def registrar_equipo(payload: EquipoCreate, db: Session = Depends(get_db)):
             Nombre_Equipo=payload.nombre_equipo.strip(),
             Marca=marca_final,
             Modelo=(payload.modelo or "S/M").strip(),
-            Serie=payload.serie_equipo.strip(),
-            U_Serie=payload.serie_universidad.strip(),
-            Lab_Serie=payload.serie_laboratorio.strip(),
+            Serie=serie_fabrica_final,
+            U_Serie=u_serie_final,
+            Lab_Serie=lab_serie_final,
             Estado=(payload.estado or "Disponible").strip(),
             Fecha_Ingreso=fecha_final,
             Observaciones=payload.observaciones.strip() if payload.observaciones else None,
@@ -1017,13 +1062,16 @@ def registrar_equipo(payload: EquipoCreate, db: Session = Depends(get_db)):
         db.commit()
         db.refresh(nuevo_equipo)
         return {"mensaje": "Equipo registrado exitosamente", "id_equipo": nuevo_equipo.Id_Equipos}
+    except HTTPException:
+        db.rollback()
+        raise
     except Exception as e:
         db.rollback()
         err_str = str(e)
         if "Duplicate entry" in err_str:
             raise HTTPException(
                 status_code=400,
-                detail="Ya existe un equipo registrado con esa Serie (Fábrica, Universidad o Laboratorio).",
+                detail="Ya existe un equipo registrado con esa Serie de Laboratorio.",
             )
         raise HTTPException(status_code=500, detail=f"Error al registrar equipo: {err_str}")
 
@@ -1040,6 +1088,29 @@ def actualizar_equipo(id_equipo: int, payload: EquipoCreate, db: Session = Depen
         raise HTTPException(status_code=404, detail="Equipo no encontrado")
 
     try:
+        _asegurar_identificacion_opcional()
+        lab_serie_final = (payload.serie_laboratorio or "").strip()
+        if not lab_serie_final:
+            raise HTTPException(
+                status_code=400,
+                detail="La Serie de Laboratorio es obligatoria.",
+            )
+
+        u_serie_final = (payload.serie_universidad or "").strip() or "N/A"
+        serie_fabrica_final = (payload.serie_equipo or "").strip() or "N/A"
+
+        if u_serie_final.upper() != "N/A":
+            dup_u = (
+                db.query(Equipo)
+                .filter(Equipo.U_Serie == u_serie_final, Equipo.Id_Equipos != id_equipo)
+                .first()
+            )
+            if dup_u:
+                raise HTTPException(
+                    status_code=400,
+                    detail=f"Otro equipo ya tiene asignada la Serie de Universidad '{u_serie_final}'.",
+                )
+
         id_prov, id_adq, id_tec, id_alim = _resolver_fks_obligatorias_equipo(payload, db)
         eq.Id_Proveedor = id_prov
         eq.Id_Adquisicion = id_adq
@@ -1049,9 +1120,9 @@ def actualizar_equipo(id_equipo: int, payload: EquipoCreate, db: Session = Depen
         eq.Nombre_Equipo = payload.nombre_equipo.strip()
         eq.Marca = (payload.marca or payload.fabricante or eq.Marca or "Sin marca").strip()
         eq.Modelo = (payload.modelo or eq.Modelo or "S/M").strip()
-        eq.Serie = payload.serie_equipo.strip()
-        eq.U_Serie = payload.serie_universidad.strip()
-        eq.Lab_Serie = payload.serie_laboratorio.strip()
+        eq.Serie = serie_fabrica_final
+        eq.U_Serie = u_serie_final
+        eq.Lab_Serie = lab_serie_final
         eq.Estado = (payload.estado or eq.Estado or "Disponible").strip()
         eq.Fecha_Ingreso = payload.fecha_ingreso or payload.fecha_adquisicion or eq.Fecha_Ingreso or date.today()
         eq.Observaciones = payload.observaciones.strip() if payload.observaciones else None
@@ -1097,13 +1168,16 @@ def actualizar_equipo(id_equipo: int, payload: EquipoCreate, db: Session = Depen
 
         db.commit()
         return {"mensaje": "Equipo actualizado correctamente", "id_equipo": eq.Id_Equipos}
+    except HTTPException:
+        db.rollback()
+        raise
     except Exception as e:
         db.rollback()
         err_str = str(e)
         if "Duplicate entry" in err_str:
             raise HTTPException(
                 status_code=400,
-                detail="Otro equipo ya tiene asignada esa Serie (Fábrica, Universidad o Laboratorio).",
+                detail="Otro equipo ya tiene asignada esa Serie de Laboratorio.",
             )
         raise HTTPException(status_code=500, detail=f"Error al actualizar equipo: {err_str}")
 

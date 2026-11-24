@@ -243,8 +243,8 @@ export default function RegistroEquipoView({
         nombre_equipo: form.nombre_equipo.trim(),
         marca: form.marca.trim(),
         modelo: form.modelo.trim(),
-        serie_equipo: form.serie_equipo.trim(),
-        serie_universidad: form.serie_universidad.trim(),
+        serie_equipo: form.serie_equipo.trim() || 'N/A',
+        serie_universidad: form.serie_universidad.trim() || 'N/A',
         serie_laboratorio: form.serie_laboratorio.trim(),
         estado: form.estado || 'Disponible',
         fecha_ingreso: form.fecha_ingreso || null,
@@ -431,20 +431,19 @@ export default function RegistroEquipoView({
             />
           </div>
 
-          {/* U_Serie */}
+          {/* U_Serie (Opcional: si no se registra se guarda como N/A) */}
           <div>
-            <label className={labelClass}>Serie Universidad *</label>
+            <label className={labelClass}>Serie Universidad</label>
             <input
               type="text"
-              required
               value={form.serie_universidad}
               onChange={(e) => updateForm('serie_universidad', e.target.value)}
-              placeholder="Ej: 01 / 100022"
+              placeholder="Ej: 100022 (Si se deja vacío será N/A)"
               className={inputClass}
             />
           </div>
 
-          {/* Lab_Serie */}
+          {/* Lab_Serie (Obligatorio y único) */}
           <div>
             <label className={labelClass}>Serie Laboratorio *</label>
             <input
@@ -452,20 +451,19 @@ export default function RegistroEquipoView({
               required
               value={form.serie_laboratorio}
               onChange={(e) => updateForm('serie_laboratorio', e.target.value)}
-              placeholder="Ej: MEC001 / MEC0012"
+              placeholder="Ej: MEC000001 / MEC000002"
               className={inputClass}
             />
           </div>
 
-          {/* Serie */}
+          {/* Serie (Opcional y se puede repetir) */}
           <div>
-            <label className={labelClass}>Serie de Fábrica *</label>
+            <label className={labelClass}>Serie de Fábrica</label>
             <input
               type="text"
-              required
               value={form.serie_equipo}
               onChange={(e) => updateForm('serie_equipo', e.target.value)}
-              placeholder="Ej: 6970632060045"
+              placeholder="Ej: 6970632060045 (Se puede repetir)"
               className={inputClass}
             />
           </div>

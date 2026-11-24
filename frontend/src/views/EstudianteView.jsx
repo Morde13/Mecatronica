@@ -405,21 +405,21 @@ export default function EstudianteView({
                     <div className="flex items-center gap-1.5">
                       <span className="font-bold text-[#2E4839]">Serial Universidad:</span>
                       <span className="px-1.5 py-0.5 rounded bg-[#EEF6F1] text-[#1B5E43] font-mono font-semibold text-[11px]">
-                        {eq.serie_universidad || 'S/N'}
+                        {eq.serie_universidad || 'N/A'}
                       </span>
                     </div>
 
                     <div className="flex items-center gap-1.5">
                       <span className="font-bold text-[#2E4839]">Serial Laboratorio:</span>
                       <span className="px-1.5 py-0.5 rounded bg-[#EEF6F1] text-[#1B5E43] font-mono font-semibold text-[11px]">
-                        {eq.serie_laboratorio || 'S/N'}
+                        {eq.serie_laboratorio || 'N/A'}
                       </span>
                     </div>
 
                     <div className="flex items-center gap-1.5">
                       <span className="font-bold text-[#2E4839]">Serial Fábrica:</span>
                       <span className="px-1.5 py-0.5 rounded bg-[#EEF6F1] text-[#1B5E43] font-mono font-semibold text-[11px]">
-                        {eq.serie_equipo || 'S/N'}
+                        {eq.serie_equipo || 'N/A'}
                       </span>
                     </div>
                   </div>

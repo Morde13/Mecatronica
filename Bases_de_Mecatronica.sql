@@ -395,8 +395,6 @@ ALTER TABLE `Detalle_Prestamo`
 --
 ALTER TABLE `Equipos`
   ADD PRIMARY KEY (`Id_Equipos`),
-  ADD UNIQUE KEY `uq_equipo_serie` (`Serie`),
-  ADD UNIQUE KEY `uq_equipo_userie` (`U_Serie`),
   ADD UNIQUE KEY `uq_equipo_labserie` (`Lab_Serie`),
   ADD KEY `fk_Proveedor_Equipos` (`Id_Proveedor`),
   ADD KEY `fk_Adquisicion_Equipos` (`Id_Adquisicion`),

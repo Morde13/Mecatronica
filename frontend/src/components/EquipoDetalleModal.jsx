@@ -107,9 +107,9 @@ export default function EquipoDetalleModal({
   );
 
   const camposGenerales = [
-    ['Serie Universidad', equipo.serie_universidad],
-    ['Serie Laboratorio', equipo.serie_laboratorio],
-    ['Serie Fábrica', equipo.serie_equipo],
+    ['Serie Universidad', equipo.serie_universidad || 'N/A'],
+    ['Serie Laboratorio', equipo.serie_laboratorio || 'N/A'],
+    ['Serie Fábrica', equipo.serie_equipo || 'N/A'],
     ['Marca', equipo.marca || equipo.fabricante],
     ['Modelo', equipo.modelo],
     ['Estado', equipo.en_prestamo ? 'En Préstamo' : equipo.estado || 'Disponible'],
@@ -149,8 +149,8 @@ export default function EquipoDetalleModal({
         nombre_equipo: form.nombre_equipo.trim(),
         marca: form.marca.trim(),
         modelo: form.modelo.trim(),
-        serie_universidad: form.serie_universidad.trim(),
-        serie_equipo: form.serie_equipo.trim(),
+        serie_universidad: form.serie_universidad.trim() || 'N/A',
+        serie_equipo: form.serie_equipo.trim() || 'N/A',
         serie_laboratorio: form.serie_laboratorio.trim(),
         estado: form.estado || 'Disponible',
         fecha_ingreso: form.fecha_ingreso || null,
@@ -359,12 +359,12 @@ export default function EquipoDetalleModal({
                     />
                   </div>
                   <div>
-                    <label className={labelClass}>Serie Universidad *</label>
+                    <label className={labelClass}>Serie Universidad</label>
                     <input
                       type="text"
-                      required
                       value={form.serie_universidad}
                       onChange={(e) => updateForm('serie_universidad', e.target.value)}
+                      placeholder="Vacío = N/A"
                       className={inputClass}
                     />
                   </div>
@@ -379,12 +379,12 @@ export default function EquipoDetalleModal({
                     />
                   </div>
                   <div>
-                    <label className={labelClass}>Serie Fábrica *</label>
+                    <label className={labelClass}>Serie Fábrica</label>
                     <input
                       type="text"
-                      required
                       value={form.serie_equipo}
                       onChange={(e) => updateForm('serie_equipo', e.target.value)}
+                      placeholder="Se puede repetir / Vacío = N/A"
                       className={inputClass}
                     />
                   </div>

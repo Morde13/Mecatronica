@@ -71,9 +71,9 @@ class EquipoCreate(BaseModel):
     marca: Optional[str] = None
     fabricante: Optional[str] = None  # Alias por compatibilidad con componentes
     modelo: str
-    serie_equipo: str  # Se guarda en Equipos.Serie
-    serie_universidad: str  # Se guarda en Equipos.U_Serie
-    serie_laboratorio: str  # Se guarda en Equipos.Lab_Serie
+    serie_equipo: Optional[str] = "N/A"  # Se guarda en Equipos.Serie (se puede repetir)
+    serie_universidad: Optional[str] = "N/A"  # Se guarda en Equipos.U_Serie (si no se registra queda N/A)
+    serie_laboratorio: str  # Obligatorio y único en Equipos.Lab_Serie
     identificacion: Optional[str] = None  # Opcional por compatibilidad
     estado: Optional[str] = "Disponible"
     fecha_ingreso: Optional[date] = None
