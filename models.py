@@ -121,6 +121,11 @@ class Equipo(Base):
         uselist=False,
         cascade="all, delete-orphan",
     )
+    componentes = relationship(
+        "ComponenteEquipo",
+        back_populates="equipo",
+        cascade="all, delete-orphan",
+    )
     datasheets = relationship(
         "Datasheet",
         back_populates="equipo",
@@ -162,6 +167,24 @@ class EspecificacionTecnica(Base):
     Senal_Salida = Column(String(100), nullable=True)
 
     equipo = relationship("Equipo", back_populates="especificaciones")
+
+
+# =======================================================
+# COMPONENTES Y ACCESORIOS DEL EQUIPO (RELACIÓN 1:N)
+# =======================================================
+class ComponenteEquipo(Base):
+    __tablename__ = "Componentes_Equipos"
+
+    Id_Componente = Column(Integer, primary_key=True, autoincrement=True)
+    Id_Equipos = Column(
+        Integer, ForeignKey("Equipos.Id_Equipos", ondelete="CASCADE"), nullable=False
+    )
+    Nombre_Componente = Column(String(150), nullable=False)
+    Marca = Column(String(100), nullable=True)
+    Modelo = Column(String(100), nullable=True)
+    Serie_Referencia = Column(String(100), nullable=True)
+
+    equipo = relationship("Equipo", back_populates="componentes")
 
 
 # =======================================================

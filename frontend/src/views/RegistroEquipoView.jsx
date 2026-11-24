@@ -380,21 +380,21 @@ export default function RegistroEquipoView({
         </div>
       )}
 
-      {/* SECCIÓN 1: Tabla Equipos (Datos Generales, Series y Ubicación) */}
+      {/* SECCIÓN 1: Datos Generales, Series y Ubicación */}
       <div className="bg-white rounded-2xl border border-emerald-100/90 p-6 space-y-5 shadow-[0_2px_12px_rgba(20,40,29,0.03)]">
         <div className="border-b border-emerald-100 pb-3.5">
           <h2 className="text-base font-bold text-[#14281D]">
-            1. Datos del Equipo, Ubicación y Series (Tabla Equipos)
+            1. Datos del Equipo, Ubicación y Series
           </h2>
           <p className="text-xs text-[#6B8576]">
-            Nombre, marca, modelo, series únicas (Universidad, Laboratorio, Fábrica) y ubicación
+            Nombre, marca, modelo, series únicas de Universidad, Laboratorio y Fábrica, y ubicación
           </p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {/* Nombre_Equipo */}
           <div>
-            <label className={labelClass}>Nombre del Equipo (Nombre_Equipo) *</label>
+            <label className={labelClass}>Nombre del Equipo *</label>
             <input
               type="text"
               required
@@ -407,7 +407,7 @@ export default function RegistroEquipoView({
 
           {/* Marca */}
           <div>
-            <label className={labelClass}>Marca (Marca) *</label>
+            <label className={labelClass}>Marca *</label>
             <input
               type="text"
               required
@@ -420,7 +420,7 @@ export default function RegistroEquipoView({
 
           {/* Modelo */}
           <div>
-            <label className={labelClass}>Modelo (Modelo) *</label>
+            <label className={labelClass}>Modelo *</label>
             <input
               type="text"
               required
@@ -433,7 +433,7 @@ export default function RegistroEquipoView({
 
           {/* U_Serie */}
           <div>
-            <label className={labelClass}>Serie Universidad (U_Serie) *</label>
+            <label className={labelClass}>Serie Universidad *</label>
             <input
               type="text"
               required
@@ -446,7 +446,7 @@ export default function RegistroEquipoView({
 
           {/* Lab_Serie */}
           <div>
-            <label className={labelClass}>Serie Laboratorio (Lab_Serie) *</label>
+            <label className={labelClass}>Serie Laboratorio *</label>
             <input
               type="text"
               required
@@ -459,7 +459,7 @@ export default function RegistroEquipoView({
 
           {/* Serie */}
           <div>
-            <label className={labelClass}>Serie de Fábrica (Serie) *</label>
+            <label className={labelClass}>Serie de Fábrica *</label>
             <input
               type="text"
               required
@@ -472,7 +472,7 @@ export default function RegistroEquipoView({
 
           {/* Sede con botón + */}
           <div>
-            <label className={labelClass}>Sede (Sedes)</label>
+            <label className={labelClass}>Sede</label>
             <div className="flex gap-1.5">
               <select
                 value={form.id_sede}
@@ -506,7 +506,7 @@ export default function RegistroEquipoView({
 
           {/* Laboratorio dependiente de la Sede seleccionada + botón + */}
           <div>
-            <label className={labelClass}>Laboratorio Asignado (Id_Laboratorio)</label>
+            <label className={labelClass}>Laboratorio Asignado</label>
             <div className="flex gap-1.5">
               <select
                 value={form.id_laboratorio}
@@ -549,7 +549,7 @@ export default function RegistroEquipoView({
 
           {/* Estado */}
           <div>
-            <label className={labelClass}>Estado del Equipo (Estado) *</label>
+            <label className={labelClass}>Estado del Equipo *</label>
             <select
               value={form.estado}
               onChange={(e) => updateForm('estado', e.target.value)}
@@ -564,7 +564,7 @@ export default function RegistroEquipoView({
 
           {/* Fecha_Ingreso */}
           <div>
-            <label className={labelClass}>Fecha de Ingreso (Fecha_Ingreso) *</label>
+            <label className={labelClass}>Fecha de Ingreso *</label>
             <input
               type="date"
               required
@@ -576,7 +576,7 @@ export default function RegistroEquipoView({
 
           {/* Proveedor Comercial con botón + */}
           <div>
-            <label className={labelClass}>Proveedor Comercial (Id_Proveedor) *</label>
+            <label className={labelClass}>Proveedor Comercial *</label>
             <div className="flex gap-1.5">
               <select
                 value={form.id_proveedor}
@@ -610,7 +610,7 @@ export default function RegistroEquipoView({
 
           {/* Tipo de Adquisición con botón + */}
           <div>
-            <label className={labelClass}>Tipo de Adquisición (Id_Adquisicion) *</label>
+            <label className={labelClass}>Tipo de Adquisición *</label>
             <div className="flex gap-1.5">
               <select
                 value={form.id_tipo_adquisicion}
@@ -645,7 +645,7 @@ export default function RegistroEquipoView({
 
           {/* Valor_Adquisicion */}
           <div>
-            <label className={labelClass}>Valor de Adquisición (Valor_Adquisicion)</label>
+            <label className={labelClass}>Valor de Adquisición</label>
             <input
               type="text"
               value={form.valor_adquisicion}
@@ -657,7 +657,7 @@ export default function RegistroEquipoView({
 
           {/* Responsable_Equipo */}
           <div>
-            <label className={labelClass}>Responsable del Equipo (Responsable_Equipo)</label>
+            <label className={labelClass}>Responsable del Equipo</label>
             <input
               type="text"
               value={form.responsable_equipo}
@@ -669,7 +669,7 @@ export default function RegistroEquipoView({
 
           {/* Observaciones */}
           <div>
-            <label className={labelClass}>Observaciones Generales (Observaciones)</label>
+            <label className={labelClass}>Observaciones Generales</label>
             <input
               type="text"
               value={form.observaciones}
@@ -681,13 +681,13 @@ export default function RegistroEquipoView({
         </div>
       </div>
 
-      {/* SECCIÓN 2: Especificaciones Técnicas (Especificaciones_Tecnicas + Tecnologia + Tipo_de_alimentacion) */}
+      {/* SECCIÓN 2: Especificaciones Técnicas */}
       <div className="bg-white rounded-2xl border border-emerald-100/90 p-6 space-y-5 shadow-[0_2px_12px_rgba(20,40,29,0.03)]">
         <div className="border-b border-emerald-100 pb-3.5 flex items-center gap-2.5">
           <Cpu size={18} className="text-[#1B5E43]" />
           <div>
             <h2 className="text-base font-bold text-[#14281D]">
-              2. Especificaciones Técnicas (Tabla Especificaciones_Tecnicas)
+              2. Especificaciones Técnicas
             </h2>
             <p className="text-xs text-[#6B8576]">
               Tipo de alimentación, tecnología predominante, rango de voltaje, corriente, frecuencia, potencia, dimensiones, peso y señal de salida
@@ -699,7 +699,7 @@ export default function RegistroEquipoView({
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {/* Tipo de Alimentación con botón + */}
             <div>
-              <label className={labelClass}>Tipo de Alimentación (Id_Alimentacion) *</label>
+              <label className={labelClass}>Tipo de Alimentación *</label>
               <div className="flex gap-1.5">
                 <select
                   value={form.id_fuente}
@@ -734,7 +734,7 @@ export default function RegistroEquipoView({
 
             {/* Tecnología con botón + */}
             <div>
-              <label className={labelClass}>Tecnología (Id_Tecnologia) *</label>
+              <label className={labelClass}>Tecnología *</label>
               <div className="flex gap-1.5">
                 <select
                   value={form.id_tecnologia}
@@ -768,13 +768,13 @@ export default function RegistroEquipoView({
             </div>
 
             {[
-              ['rango_voltaje', 'Rango de Voltaje (Rango_Voltaje)', 'Ej: 110 V / 220 V'],
-              ['corriente', 'Corriente (Corriente)', 'Ej: 5A'],
-              ['frecuencia', 'Frecuencia (Frecuencia)', 'Ej: 50/60 Hz'],
-              ['potencia', 'Potencia (Potencia)', 'Ej: 10000W / 150W'],
-              ['dimensiones_mm', 'Dimensiones en mm (Dimensiones_mm)', 'Ej: 300X200X100'],
-              ['peso', 'Peso (Peso)', 'Ej: 50g / 12.5 kg'],
-              ['senal_salida', 'Señal de Salida (Senal_Salida)', 'Ej: 0-30V DC / Digital / PWM'],
+              ['rango_voltaje', 'Rango de Voltaje', 'Ej: 110 V / 220 V'],
+              ['corriente', 'Corriente', 'Ej: 5A'],
+              ['frecuencia', 'Frecuencia', 'Ej: 50/60 Hz'],
+              ['potencia', 'Potencia', 'Ej: 10000W / 150W'],
+              ['dimensiones_mm', 'Dimensiones en mm', 'Ej: 300X200X100'],
+              ['peso', 'Peso', 'Ej: 50g / 12.5 kg'],
+              ['senal_salida', 'Señal de Salida', 'Ej: 0-30V DC / Digital / PWM'],
             ].map(([key, lbl, ph]) => (
               <div key={key}>
                 <label className={labelClass}>{lbl}</label>
@@ -875,7 +875,7 @@ export default function RegistroEquipoView({
               <FileText size={18} className="text-[#1B5E43]" />
               <div>
                 <h2 className="text-base font-bold text-[#14281D]">
-                  4. Datasheets y Manuales (Tabla Datasheets)
+                  4. Datasheets y Manuales
                 </h2>
                 <p className="text-xs text-[#6B8576]">
                   Sube uno o varios archivos PDF asociados al equipo
@@ -933,7 +933,7 @@ export default function RegistroEquipoView({
             <ImageIcon size={18} className="text-[#1B5E43]" />
             <div>
               <h2 className="text-base font-bold text-[#14281D]">
-                4. Fotografías del Equipo (Tabla Imagenes)
+                4. Fotografías del Equipo
               </h2>
               <p className="text-xs text-[#6B8576]">
                 Registro visual general del equipo

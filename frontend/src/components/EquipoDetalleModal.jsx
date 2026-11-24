@@ -107,9 +107,9 @@ export default function EquipoDetalleModal({
   );
 
   const camposGenerales = [
-    ['Serie Universidad (U_Serie)', equipo.serie_universidad],
-    ['Serie Laboratorio (Lab_Serie)', equipo.serie_laboratorio],
-    ['Serie Fábrica (Serie)', equipo.serie_equipo],
+    ['Serie Universidad', equipo.serie_universidad],
+    ['Serie Laboratorio', equipo.serie_laboratorio],
+    ['Serie Fábrica', equipo.serie_equipo],
     ['Marca', equipo.marca || equipo.fabricante],
     ['Modelo', equipo.modelo],
     ['Estado', equipo.en_prestamo ? 'En Préstamo' : equipo.estado || 'Disponible'],
@@ -359,7 +359,7 @@ export default function EquipoDetalleModal({
                     />
                   </div>
                   <div>
-                    <label className={labelClass}>Serie Universidad (U_Serie) *</label>
+                    <label className={labelClass}>Serie Universidad *</label>
                     <input
                       type="text"
                       required
@@ -369,7 +369,7 @@ export default function EquipoDetalleModal({
                     />
                   </div>
                   <div>
-                    <label className={labelClass}>Serie Laboratorio (Lab_Serie) *</label>
+                    <label className={labelClass}>Serie Laboratorio *</label>
                     <input
                       type="text"
                       required
@@ -379,7 +379,7 @@ export default function EquipoDetalleModal({
                     />
                   </div>
                   <div>
-                    <label className={labelClass}>Serie Fábrica (Serie) *</label>
+                    <label className={labelClass}>Serie Fábrica *</label>
                     <input
                       type="text"
                       required
@@ -979,12 +979,14 @@ export default function EquipoDetalleModal({
                       <span className="text-[11px] text-[#526B5C]">Peso</span>
                       <p className="font-bold text-[#14281D] mt-0.5">{esp.peso || '—'}</p>
                     </div>
-                    <div className="p-2.5 rounded-xl bg-[#FAFDFB] border border-emerald-100/80">
-                      <span className="text-[11px] text-[#526B5C]">Señal de Salida</span>
-                      <p className="font-bold text-[#14281D] mt-0.5">
-                        {esp.senal_salida || '—'}
-                      </p>
-                    </div>
+                    {esp.senal_salida && String(esp.senal_salida).trim() !== '' && (
+                      <div className="p-2.5 rounded-xl bg-[#FAFDFB] border border-emerald-100/80">
+                        <span className="text-[11px] text-[#526B5C]">Señal de Salida</span>
+                        <p className="font-bold text-[#14281D] mt-0.5">
+                          {esp.senal_salida}
+                        </p>
+                      </div>
+                    )}
                   </div>
                 </div>
 

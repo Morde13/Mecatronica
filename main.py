@@ -1828,3 +1828,10 @@ def iniciar_sesion(payload: LoginRequest, db: Session = Depends(get_db)):
 FRONTEND_DIST = BASE_DIR / "frontend" / "dist"
 if FRONTEND_DIST.exists():
     app.mount("/", StaticFiles(directory=str(FRONTEND_DIST), html=True), name="frontend")
+
+
+if __name__ == "__main__":
+    import uvicorn
+
+    uvicorn.run("main:app", host="127.0.0.1", port=8001, reload=True)
+

@@ -177,7 +177,7 @@ export default function MantenimientoView({
             Registro de mantenimiento
           </h1>
           <p className="text-sm text-[#526B5C] mt-1">
-            Administra los mantenimientos preventivos, correctivos, notas técnicas y sus evidencias (Tabla Mantenimiento).
+            Administra los mantenimientos preventivos, correctivos, notas técnicas y sus evidencias.
           </p>
         </div>
 
@@ -198,14 +198,14 @@ export default function MantenimientoView({
         >
           <div className="border-b border-emerald-100 pb-3 flex items-center justify-between">
             <h3 className="text-base font-bold text-[#14281D]">
-              Nuevo Registro de Mantenimiento (Tabla Mantenimiento)
+              Nuevo Registro de Mantenimiento
             </h3>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <label className="block text-xs font-semibold text-[#2E4839] mb-1.5">
-                Seleccionar Equipo (Id_Equipos) *
+                Seleccionar Equipo *
               </label>
               <EquipoSearchSelect
                 equipos={equipos}
@@ -219,7 +219,7 @@ export default function MantenimientoView({
 
             <div>
               <label className="block text-xs font-semibold text-[#2E4839] mb-1.5">
-                Tipo de Mantenimiento (Id_TMantenimiento) *
+                Tipo de Mantenimiento *
               </label>
               <div className="flex gap-1.5">
                 <select
@@ -259,7 +259,7 @@ export default function MantenimientoView({
 
             <div>
               <label className="block text-xs font-semibold text-[#2E4839] mb-1.5">
-                Fecha de Mantenimiento (Fecha) *
+                Fecha de Mantenimiento *
               </label>
               <input
                 type="date"
@@ -272,7 +272,7 @@ export default function MantenimientoView({
 
             <div>
               <label className="block text-xs font-semibold text-[#2E4839] mb-1.5">
-                Responsable Técnico (Responsable) *
+                Responsable Técnico *
               </label>
               <input
                 type="text"
@@ -286,7 +286,7 @@ export default function MantenimientoView({
 
             <div>
               <label className="block text-xs font-semibold text-[#2E4839] mb-1.5">
-                Costo Asociado ($ COP) (Costo) *
+                Costo Asociado ($ COP) *
               </label>
               <input
                 type="number"
@@ -322,7 +322,7 @@ export default function MantenimientoView({
 
             <div className="md:col-span-3">
               <label className="block text-xs font-semibold text-[#2E4839] mb-1.5">
-                Notas Técnicas / Observaciones del Mantenimiento (Notas)
+                Notas Técnicas / Observaciones del Mantenimiento
               </label>
               <textarea
                 rows="2"

@@ -61,6 +61,24 @@ CREATE TABLE `Detalle_Prestamo` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `Componentes_Equipos`
+--
+
+CREATE TABLE `Componentes_Equipos` (
+  `Id_Componente` int(11) NOT NULL AUTO_INCREMENT,
+  `Id_Equipos` int(11) NOT NULL,
+  `Nombre_Componente` varchar(150) NOT NULL,
+  `Marca` varchar(100) DEFAULT NULL,
+  `Modelo` varchar(100) DEFAULT NULL,
+  `Serie_Referencia` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`Id_Componente`),
+  KEY `fk_Equipos_Componentes` (`Id_Equipos`),
+  CONSTRAINT `fk_Equipos_Componentes` FOREIGN KEY (`Id_Equipos`) REFERENCES `Equipos` (`Id_Equipos`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `Equipos`
 --
 
@@ -75,7 +93,6 @@ CREATE TABLE `Equipos` (
   `Marca` varchar(100) NOT NULL,
   `Modelo` varchar(100) NOT NULL,
   `Serie` varchar(100) NOT NULL,
-  `Identificacion` varchar(100) NOT NULL,
   `Estado` varchar(50) NOT NULL,
   `Fecha_Ingreso` date NOT NULL,
   `Observaciones` varchar(255) DEFAULT NULL,
@@ -89,10 +106,10 @@ CREATE TABLE `Equipos` (
 -- Dumping data for table `Equipos`
 --
 
-INSERT INTO `Equipos` (`Id_Equipos`, `Id_Proveedor`, `Id_Adquisicion`, `Id_Tecnologia`, `Id_Alimentacion`, `Id_Laboratorio`, `Nombre_Equipo`, `Marca`, `Modelo`, `Serie`, `Identificacion`, `Estado`, `Fecha_Ingreso`, `Observaciones`, `U_Serie`, `Lab_Serie`, `Valor_Adquisicion`, `Responsable_Equipo`) VALUES
-(2, 1, 1, 1, 1, NULL, 'Robot colaborativo DOBOT MG400', 'DOBOT', 'MG400', '6970632060045', 'Brazo robótico, fuente de alimentación', 'Disponible', '2022-08-31', 'Se le realizo mantenimiento correctivo ', '01', 'MEC001', NULL, NULL),
-(3, 1, 1, 1, 1, NULL, 'Monitor', '10012', '102', '12', '12390', 'Disponible', '2026-07-31', '', '290', '12390', '', ''),
-(4, 1, 1, 2, 1, NULL, 'Fuente de alimentacion', 'Gwinsterk ', 'GPE-3232', '10012', 'Adaptador ', 'Disponible', '2026-07-31', 'prueba', '100022', 'MEC0012', '1500000', 'Juan');
+INSERT INTO `Equipos` (`Id_Equipos`, `Id_Proveedor`, `Id_Adquisicion`, `Id_Tecnologia`, `Id_Alimentacion`, `Id_Laboratorio`, `Nombre_Equipo`, `Marca`, `Modelo`, `Serie`, `Estado`, `Fecha_Ingreso`, `Observaciones`, `U_Serie`, `Lab_Serie`, `Valor_Adquisicion`, `Responsable_Equipo`) VALUES
+(2, 1, 1, 1, 1, NULL, 'Robot colaborativo DOBOT MG400', 'DOBOT', 'MG400', '6970632060045', 'Disponible', '2022-08-31', 'Se le realizo mantenimiento correctivo ', '01', 'MEC001', NULL, NULL),
+(3, 1, 1, 1, 1, NULL, 'Monitor', '10012', '102', '12', 'Disponible', '2026-07-31', '', '290', '12390', '', ''),
+(4, 1, 1, 2, 1, NULL, 'Fuente de alimentacion', 'Gwinsterk ', 'GPE-3232', '10012', 'Disponible', '2026-07-31', 'prueba', '100022', 'MEC0012', '1500000', 'Juan');
 
 -- --------------------------------------------------------
 
@@ -381,7 +398,6 @@ ALTER TABLE `Equipos`
   ADD UNIQUE KEY `uq_equipo_serie` (`Serie`),
   ADD UNIQUE KEY `uq_equipo_userie` (`U_Serie`),
   ADD UNIQUE KEY `uq_equipo_labserie` (`Lab_Serie`),
-  ADD UNIQUE KEY `uq_equipo_identificacion` (`Identificacion`),
   ADD KEY `fk_Proveedor_Equipos` (`Id_Proveedor`),
   ADD KEY `fk_Adquisicion_Equipos` (`Id_Adquisicion`),
   ADD KEY `fk_Tecnologia_Equipos` (`Id_Tecnologia`),
