@@ -456,14 +456,14 @@ export default function RegistroEquipoView({
             />
           </div>
 
-          {/* Serie (Opcional y se puede repetir) */}
+          {/* Serie (Opcional: si se deja vacío se guarda N/A; si se llena no se puede repetir) */}
           <div>
             <label className={labelClass}>Serie de Fábrica</label>
             <input
               type="text"
               value={form.serie_equipo}
               onChange={(e) => updateForm('serie_equipo', e.target.value)}
-              placeholder="Ej: 6970632060045 (Se puede repetir)"
+              placeholder="Ej: 6970632060045 (Si se deja vacío será N/A)"
               className={inputClass}
             />
           </div>

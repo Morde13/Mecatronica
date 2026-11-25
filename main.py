@@ -948,22 +948,43 @@ def registrar_equipo(payload: EquipoCreate, db: Session = Depends(get_db)):
     try:
         _asegurar_identificacion_opcional()
         lab_serie_final = (payload.serie_laboratorio or "").strip()
-        if not lab_serie_final:
+        if not lab_serie_final or lab_serie_final.upper() == "N/A":
             raise HTTPException(
                 status_code=400,
-                detail="La Serie de Laboratorio es obligatoria.",
+                detail="La Serie de Laboratorio es obligatoria y no puede ser N/A.",
             )
 
-        u_serie_final = (payload.serie_universidad or "").strip() or "N/A"
-        serie_fabrica_final = (payload.serie_equipo or "").strip() or "N/A"
+        dup_lab = db.query(Equipo).filter(Equipo.Lab_Serie == lab_serie_final).first()
+        if dup_lab:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Ya existe otro equipo registrado con la Serie de Laboratorio '{lab_serie_final}'.",
+            )
+
+        u_serie_raw = (payload.serie_universidad or "").strip()
+        u_serie_final = "N/A" if not u_serie_raw or u_serie_raw.upper() == "N/A" else u_serie_raw
+
+        serie_fabrica_raw = (payload.serie_equipo or "").strip()
+        serie_fabrica_final = (
+            "N/A" if not serie_fabrica_raw or serie_fabrica_raw.upper() == "N/A" else serie_fabrica_raw
+        )
 
         # Si el usuario sí escribió una Serie de Universidad distinta de N/A, validar que no esté repetida
-        if u_serie_final.upper() != "N/A":
+        if u_serie_final != "N/A":
             dup_u = db.query(Equipo).filter(Equipo.U_Serie == u_serie_final).first()
             if dup_u:
                 raise HTTPException(
                     status_code=400,
                     detail=f"Ya existe otro equipo registrado con la Serie de Universidad '{u_serie_final}'.",
+                )
+
+        # Si el usuario sí escribió una Serie de Fábrica distinta de N/A, validar que no esté repetida
+        if serie_fabrica_final != "N/A":
+            dup_s = db.query(Equipo).filter(Equipo.Serie == serie_fabrica_final).first()
+            if dup_s:
+                raise HTTPException(
+                    status_code=400,
+                    detail=f"Ya existe otro equipo registrado con la Serie de Fábrica '{serie_fabrica_final}'.",
                 )
 
         id_prov, id_adq, id_tec, id_alim = _resolver_fks_obligatorias_equipo(payload, db)
@@ -1090,16 +1111,32 @@ def actualizar_equipo(id_equipo: int, payload: EquipoCreate, db: Session = Depen
     try:
         _asegurar_identificacion_opcional()
         lab_serie_final = (payload.serie_laboratorio or "").strip()
-        if not lab_serie_final:
+        if not lab_serie_final or lab_serie_final.upper() == "N/A":
             raise HTTPException(
                 status_code=400,
-                detail="La Serie de Laboratorio es obligatoria.",
+                detail="La Serie de Laboratorio es obligatoria y no puede ser N/A.",
             )
 
-        u_serie_final = (payload.serie_universidad or "").strip() or "N/A"
-        serie_fabrica_final = (payload.serie_equipo or "").strip() or "N/A"
+        dup_lab = (
+            db.query(Equipo)
+            .filter(Equipo.Lab_Serie == lab_serie_final, Equipo.Id_Equipos != id_equipo)
+            .first()
+        )
+        if dup_lab:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Otro equipo ya tiene asignada la Serie de Laboratorio '{lab_serie_final}'.",
+            )
 
-        if u_serie_final.upper() != "N/A":
+        u_serie_raw = (payload.serie_universidad or "").strip()
+        u_serie_final = "N/A" if not u_serie_raw or u_serie_raw.upper() == "N/A" else u_serie_raw
+
+        serie_fabrica_raw = (payload.serie_equipo or "").strip()
+        serie_fabrica_final = (
+            "N/A" if not serie_fabrica_raw or serie_fabrica_raw.upper() == "N/A" else serie_fabrica_raw
+        )
+
+        if u_serie_final != "N/A":
             dup_u = (
                 db.query(Equipo)
                 .filter(Equipo.U_Serie == u_serie_final, Equipo.Id_Equipos != id_equipo)
@@ -1109,6 +1146,18 @@ def actualizar_equipo(id_equipo: int, payload: EquipoCreate, db: Session = Depen
                 raise HTTPException(
                     status_code=400,
                     detail=f"Otro equipo ya tiene asignada la Serie de Universidad '{u_serie_final}'.",
+                )
+
+        if serie_fabrica_final != "N/A":
+            dup_s = (
+                db.query(Equipo)
+                .filter(Equipo.Serie == serie_fabrica_final, Equipo.Id_Equipos != id_equipo)
+                .first()
+            )
+            if dup_s:
+                raise HTTPException(
+                    status_code=400,
+                    detail=f"Otro equipo ya tiene asignada la Serie de Fábrica '{serie_fabrica_final}'.",
                 )
 
         id_prov, id_adq, id_tec, id_alim = _resolver_fks_obligatorias_equipo(payload, db)

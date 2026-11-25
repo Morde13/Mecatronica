@@ -384,7 +384,7 @@ export default function EquipoDetalleModal({
                       type="text"
                       value={form.serie_equipo}
                       onChange={(e) => updateForm('serie_equipo', e.target.value)}
-                      placeholder="Se puede repetir / Vacío = N/A"
+                      placeholder="Vacío = N/A"
                       className={inputClass}
                     />
                   </div>
